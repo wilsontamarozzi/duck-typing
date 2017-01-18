@@ -13,15 +13,22 @@ type Info struct {
 	Ip string `json:"ip"`
 }
 
+type ServerInterface interface {
+	LoadData(url string) (string, error)
+}
+
 func main() {
-	result := GetIP()
+
+	server := Server{}
+
+	result := GetIP(server)
 
 	fmt.Println("IP:", result)
 }
 
-func GetIP() string {
+func GetIP(s ServerInterface) string {
 
-	response, err := LoadData(URL_SERVER)
+	response, err := s.LoadData(URL_SERVER)
 
 	if err != nil {
 		fmt.Println("ERROR: ", err)
@@ -31,7 +38,9 @@ func GetIP() string {
 	return response
 }
 
-func LoadData(url string) (string, error) {
+type Server struct{}
+
+func (s Server) LoadData(url string) (string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		fmt.Println("ERROR: ", err)
